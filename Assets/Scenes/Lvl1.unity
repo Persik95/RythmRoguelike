@@ -581,7 +581,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 7
-  jumpForce: 3
+  jumpForce: 7
   rigidbodyPlayer: {fileID: 1827629323}
   startPosLine: {fileID: 1261743405}
   endPosLine: {fileID: 999908027}
@@ -589,6 +589,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   isGround: 0
+  Flipped: 0
+  KD: 0
   vectorForFlip: {x: 1, y: 0.8896124, z: 0}
   bulletPrefab: {fileID: 1424112887427400335, guid: f2cbb943b73fd02438ec3b66a6747005, type: 3}
 --- !u!1 &1848935647

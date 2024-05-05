@@ -16,12 +16,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask layerMask;
 
     [SerializeField] private bool isGround;
+    [SerializeField] private bool Flipped;
+    [SerializeField] private bool KD;
 
     [SerializeField] private Vector3 vectorForFlip;
 
     [SerializeField] private GameObject bulletPrefab;
     void Start()
     {
+        StartCoroutine("KDTimer");
+    }
+    IEnumerator KDTimer()
+    {
+        yield return new WaitForSecondsRealtime(2);
+        KD = true;
 
     }
     void FixedUpdate()
@@ -52,10 +60,12 @@ public class PlayerController : MonoBehaviour
         if(moveX > 0)
         {
             vectorForFlip.x = Mathf.Abs(vectorForFlip.x);
+            Flipped = false;
         }
         else if (moveX < 0)
         {
             vectorForFlip.x = -Mathf.Abs(vectorForFlip.x);
+            Flipped = true;
         }
     }
     /// <summary>
@@ -82,15 +92,25 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void Atack()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            Vector3 mousePos = Input.mousePosition;
-            mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-            mousePos.z = 0;
-            float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
-
-            GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-            newBullet.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            float moveX = Input.GetAxis("Horizontal");
+            float angle = 0;
+            if(Flipped != true)
+            {
+                angle = 0;
+            }
+            else if (Flipped == true)
+            {
+                angle = 180;
+            }
+            if (KD == true)
+            {
+                GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+                newBullet.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                KD = false;
+                StartCoroutine("KDTimer");
+            }
         }
     }
 }
