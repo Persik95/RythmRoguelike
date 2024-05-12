@@ -6,58 +6,63 @@ public class PlayerController : MonoBehaviour
 {
 
     [SerializeField] private float speed;
-    [SerializeField] private float jumpForce;
+    [SerializeField] private float jumpstrenth;
 
-    [SerializeField] private Rigidbody2D rigidbodyPlayer;
+    [SerializeField] private Rigidbody2D PlrRB;
 
-    [SerializeField] private Transform startPosLine;
-    [SerializeField] private Transform endPosLine;
+    [SerializeField] private LayerMask groundLayerMask;
 
-    [SerializeField] private LayerMask layerMask;
-
-    [SerializeField] private bool isGround;
     [SerializeField] private bool Flipped;
     [SerializeField] private bool KD;
 
     [SerializeField] private Vector3 vectorForFlip;
+    [SerializeField] private Vector2 groundPointSize;
 
     [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private GameObject groundPoint;
+
+
     void Start()
     {
         StartCoroutine("KDTimer");
     }
     IEnumerator KDTimer()
     {
-        yield return new WaitForSecondsRealtime(2);
+        yield return new WaitForSeconds(0.5f);
         KD = true;
 
     }
     void FixedUpdate()
     {
-        Atack();
-        CheckGround();
+        Attack();
         PlayerMovement();
         transform.localScale = vectorForFlip;
     }
-
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(groundPoint.transform.position, groundPointSize);
+    }
+    bool IsGrounded()
+    {
+        RaycastHit2D hit = Physics2D.BoxCast(groundPoint.transform.position, groundPointSize, 0, Vector2.zero, 0, groundLayerMask);
+        return hit.collider != null;
+    }
     /// <summary>
     /// Метод для передвижения игрока
     /// </summary>
     public void PlayerMovement()
     {
         float moveX = Input.GetAxis("Horizontal");
-        
-        rigidbodyPlayer.velocity = new Vector2 (moveX * speed, rigidbodyPlayer.velocity.y);
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        PlrRB.velocity = new Vector2 (moveX * speed, PlrRB.velocity.y);
+
+        if (Input.GetKeyDown(KeyCode.W) && IsGrounded())
         {
-            if(isGround == true)
-            {
-                rigidbodyPlayer.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
-            }
+            PlrRB.AddForce(transform.up * jumpstrenth, ForceMode2D.Impulse);
         }
-        
-        if(moveX > 0)
+
+        if (moveX > 0)
         {
             vectorForFlip.x = Mathf.Abs(vectorForFlip.x);
             Flipped = false;
@@ -71,26 +76,11 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// Метод для проверки того, на земле ли игрок
     /// </summary>
-    public void CheckGround()
-    {
-        RaycastHit2D hit= Physics2D.Linecast(startPosLine.position, endPosLine.position, layerMask);
-        if(hit.collider)
-        {
-            if(hit.collider.gameObject.tag == "Ground")
-            {
-                isGround = true;
-            }
-        }
-        if(hit.collider == null)
-        {
-            isGround = false;
-        }
-        
-    }
+    
     /// <summary>
     /// Метод для атаки
     /// </summary>
-    public void Atack()
+    public void Attack()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
