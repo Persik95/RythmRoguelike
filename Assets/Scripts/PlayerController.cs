@@ -21,10 +21,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private GameObject groundPoint;
 
-
+    private Animator Animator;
     void Start()
     {
         StartCoroutine("KDTimer");
+        Animator = GetComponent<Animator>();
     }
     IEnumerator KDTimer()
     {
@@ -55,11 +56,18 @@ public class PlayerController : MonoBehaviour
     {
         float moveX = Input.GetAxis("Horizontal");
 
+        Animator.SetFloat("Speed", Mathf.Abs(moveX * speed));
+
         PlrRB.velocity = new Vector2 (moveX * speed, PlrRB.velocity.y);
 
         if (Input.GetKeyDown(KeyCode.W) && IsGrounded())
         {
             PlrRB.AddForce(transform.up * jumpstrenth, ForceMode2D.Impulse);
+            string currentAnimState = Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+            if (Input.GetKeyDown(KeyCode.W) && currentAnimState != "WizardJump")
+            {
+                Animator.SetTrigger("Jump");
+            }
         }
 
         if (moveX > 0)
@@ -103,4 +111,5 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    
 }
