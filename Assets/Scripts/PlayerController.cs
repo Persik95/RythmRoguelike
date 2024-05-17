@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
 
     [SerializeField] private float speed;
-    [SerializeField] private float jumpstrenth;
+    [SerializeField] private float jumpForce;
 
     [SerializeField] private Rigidbody2D PlrRB;
 
@@ -26,6 +27,7 @@ public class PlayerController : MonoBehaviour
     {
         StartCoroutine("KDTimer");
         Animator = GetComponent<Animator>();
+        PlrRB = GetComponent<Rigidbody2D>();
     }
     IEnumerator KDTimer()
     {
@@ -60,11 +62,11 @@ public class PlayerController : MonoBehaviour
 
         PlrRB.velocity = new Vector2 (moveX * speed, PlrRB.velocity.y);
 
-        if (Input.GetKeyDown(KeyCode.W) && IsGrounded())
+        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
-            PlrRB.AddForce(transform.up * jumpstrenth, ForceMode2D.Impulse);
+            PlrRB.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
             string currentAnimState = Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
-            if (Input.GetKeyDown(KeyCode.W) && currentAnimState != "WizardJump")
+            if (Input.GetKeyDown(KeyCode.Space) && currentAnimState != "WizardJump")
             {
                 Animator.SetTrigger("Jump");
             }
@@ -90,7 +92,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void Attack()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             float moveX = Input.GetAxis("Horizontal");
             float angle = 0;
