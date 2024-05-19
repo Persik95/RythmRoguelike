@@ -62,8 +62,11 @@ public class PlayerController : MonoBehaviour
 
         PlrRB.velocity = new Vector2 (moveX * speed, PlrRB.velocity.y);
 
+        print(IsGrounded());
         if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
+
+            
             PlrRB.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
             string currentAnimState = Animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
             if (Input.GetKeyDown(KeyCode.Space) && currentAnimState != "WizardJump")
